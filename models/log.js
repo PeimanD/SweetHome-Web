@@ -1,34 +1,35 @@
 const Joi = require('joi');
 const mongoose = require('mongoose');
-
-const Customer = mongoose.model('Customer', new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    minlength: 5,
-    maxlength: 50
+const dayInfo = new Schema({
+  externalTemp: Number,
+  internalTemp: Number,
+  energyUsage: Number,
+  savings: Number,
+  thermostatMode: Number
+});
+const log = mongoose.model('log', new mongoose.Schema({
+  userID:{
+    type: ObjectId,
+    required: true
   },
-  isGold: {
-    type: Boolean,
-    default: false
+  thermostatId: {
+    type: String
   },
-  phone: {
-    type: String,
-    required: true,
-    minlength: 5,
-    maxlength: 50
+  monthInfo: {
+    // *********How to make it an array?*********
+    type: dayInfo
   }
 }));
 
-function validateCustomer(customer) {
+function validateLog(log) {
   const schema = {
-    name: Joi.string().min(5).max(50).required(),
-    phone: Joi.string().min(5).max(50).required(),
-    isGold: Joi.boolean()
+    userId: Joi.string().required(),
+    thermostatId: Joi.string().required(),
+    monthInfo: Joi.dayInfo()
   };
 
-  return Joi.validate(customer, schema);
+  return Joi.validate(log, schema);
 }
 
-exports.Customer = Customer;
-exports.validate = validateCustomer;
+exports.log = log;
+exports.validate = validateLog;
